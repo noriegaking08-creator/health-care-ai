@@ -1,0 +1,25 @@
+
+{
+  "diseases": [
+    {
+      "name": "Malaria",
+      "malawi_prevalence": "High",
+      "symptoms": ["Fever", "Chills", "Headache", "Nausea", "Fatigue"],
+      "initial_advice": "Based on these symptoms, Malaria is a possibility. You must seek a **Malaria test** at a nearby clinic immediately. Keep hydrated and use mosquito nets.",
+      "medication_suggestions": ["Artemether-Lumefantrine (AL) - Only after positive diagnosis."],
+      "food_advice": "Light, easily digestible foods. Increase fluid intake."
+    },
+    {
+      "name": "Cholera",
+      "malawi_prevalence": "Seasonal",
+      "symptoms": ["Severe watery diarrhea", "Vomiting", "Rapid heart rate", "Thirst"],
+      "initial_advice": "This suggests **severe dehydration**. Start Oral Rehydration Salts (ORS) immediately. You need urgent medical attention.",
+      "medication_suggestions": ["Oral Rehydration Salts (ORS). Antibiotics may be prescribed by a doctor."],
+      "food_advice": "Avoid heavy or fatty foods. Focus on ORS and clean water."
+    }
+  ],
+  "common_exercises": [
+    {"name": "Walking", "advice": "Aim for 30 minutes daily."},
+    {"name": "Stretching", "advice": "Good for joint mobility, especially in the morning."}
+  ]
+}

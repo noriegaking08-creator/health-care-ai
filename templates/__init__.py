@@ -1,0 +1,5 @@
+from .clinic_location_template import get_clinic_finder_prompt
+from .document_reading_template import get_document_reading_prompt
+from .progress_tracking_template import get_progress_tracking_prompt
+from .report_writing_template import get_report_writing_prompt
+from .system_template import get_doctor_persona_prompt

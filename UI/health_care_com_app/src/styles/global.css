@@ -1,0 +1,90 @@
+/* Global variables for a professional look */
+:root {
+    --color-primary: #007bff; /* Medical Blue */
+    --color-secondary: #28a745; /* Green for success/advice */
+    --color-text: #333;
+    --color-bg-light: #f4f6f9; /* Light grey background */
+    --color-bubble-user: #e0f7fa; /* Light cyan */
+    --color-bubble-doctor: #ffffff; /* White for professional response */
+    --color-shadow: rgba(0, 0, 0, 0.05);
+}
+
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-bg-light);
+    color: var(--color-text);
+    line-height: 1.6;
+    width: 100% !important;
+}
+
+#root {
+    display: flex !important;
+    min-height: 100vh !important;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Ensure page containers use full width */
+.page-container > div,
+.container {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Professional Button Styling */
+button {
+    cursor: pointer;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease; /* Include more properties in transition */
+    font-weight: 600;
+    outline: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.primary-btn {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.primary-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.input-field {
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Layout adjustments */
+.page-container {
+    flex-grow: 1;
+    padding: 20px;
+    width: 100%;
+    max-width: 100%; /* Use full available width */
+    margin: 0; /* Remove centering margin */
+}

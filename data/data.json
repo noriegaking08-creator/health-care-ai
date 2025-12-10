@@ -1,0 +1,24 @@
+{
+  "diseases": [
+    {
+      "name": "Malaria",
+      "symptoms": ["fever", "headache", "chills", "vomiting", "flu-like"],
+      "initial_advice": "Drink plenty of fluids and take antimalarial medication as prescribed. Seek immediate medical attention if symptoms worsen."
+    },
+    {
+      "name": "Diarrhea",
+      "symptoms": ["diarrhea", "stomach cramps", "dehydration"],
+      "initial_advice": "Stay hydrated with oral rehydration salts. Avoid dairy and fatty foods. Consult a healthcare provider if symptoms persist beyond 24 hours."
+    },
+    {
+      "name": "Typhoid",
+      "symptoms": ["high fever", "weakness", "stomach pain", "headache", "loss of appetite"],
+      "initial_advice": "Rest and stay hydrated. Seek medical attention for proper diagnosis and antibiotic treatment."
+    },
+    {
+      "name": "Cholera",
+      "symptoms": ["watery diarrhea", "vomiting", "leg cramps", "dehydration"],
+      "initial_advice": "Immediate rehydration is critical. Seek emergency medical care for proper treatment and antibiotics."
+    }
+  ]
+}
