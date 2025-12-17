@@ -1,0 +1,36 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python",
+      "config": { "runtime": "python3.9" }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/users/register",
+      "dest": "/api/index.py"
+    },
+    {
+      "src": "/api/users/login",
+      "dest": "/api/index.py"
+    },
+    {
+      "src": "/api/users/(.*)",
+      "dest": "/api/index.py"
+    },
+    {
+      "src": "/api/chat/message",
+      "dest": "/api/index.py"
+    },
+    {
+      "src": "/api/health",
+      "dest": "/api/index.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - HealthCom</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>HealthCom</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="chat.html" class="nav-link">Chat</a></li>
+                <li><a href="profile.html" class="nav-link active">Profile</a></li>
+                <li><a href="#" class="nav-link" id="logoutBtn">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="profile-container">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="profile-info">
+                <h2 id="profileName">User Profile</h2>
+                <p id="profileUsername">@username</p>
+            </div>
+        </div>
+
+        <div class="profile-details">
+            <div class="profile-card">
+                <h3><i class="fas fa-user"></i> Personal Information</h3>
+                <div class="detail-item">
+                    <span class="label">Full Name:</span>
+                    <span id="profileFullName">-</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Age:</span>
+                    <span id="profileAge">-</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Location:</span>
+                    <span id="profileLocation">-</span>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                <p>No recent activity</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

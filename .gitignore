@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+.venv/
+__pycache__/
+
+# Build outputs
+build/
+dist/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# OS generated files
+.DS_Store
+Thumbs.db
+.DS_Store?
+ehthumbs.db
+Icon?
+*.lck
+
+# Database files
+*.db
+
+# Other directories that should not be version controlled
+data/
+memory/
+model/
+notifications/
+templates/
+uploads/
