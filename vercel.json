@@ -14,34 +14,6 @@
     {
       "src": "/api/(.*)",
       "dest": "/api/index.py"
-    },
-    {
-      "src": "/css/(.*)",
-      "dest": "/css/$1"
-    },
-    {
-      "src": "/js/(.*)",
-      "dest": "/js/$1"
-    },
-    {
-      "src": "/login.html",
-      "dest": "/login.html"
-    },
-    {
-      "src": "/register.html",
-      "dest": "/register.html"
-    },
-    {
-      "src": "/chat.html",
-      "dest": "/chat.html"
-    },
-    {
-      "src": "/profile.html",
-      "dest": "/profile.html"
-    },
-    {
-      "src": "/",
-      "dest": "/index.html"
     }
   ]
 }

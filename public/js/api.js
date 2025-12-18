@@ -22,7 +22,7 @@ class SessionManager {
 
     static redirectIfNotAuthenticated() {
         if (!this.isAuthenticated()) {
-            window.location.href = 'login.html';
+            window.location.href = '/login.html';
         }
     }
 }
