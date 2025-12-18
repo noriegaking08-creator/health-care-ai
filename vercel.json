@@ -4,32 +4,43 @@
     {
       "src": "api/index.py",
       "use": "@vercel/python",
-      "config": { "runtime": "python3.9" }
+      "config": {
+        "maxLambdaSize": 26214400,
+        "runtime": "python3.9"
+      }
     }
   ],
   "routes": [
     {
-      "src": "/api/users/register",
+      "src": "/api/(.*)",
       "dest": "/api/index.py"
     },
     {
-      "src": "/api/users/login",
-      "dest": "/api/index.py"
+      "src": "/css/(.*)",
+      "dest": "/css/$1"
     },
     {
-      "src": "/api/users/(.*)",
-      "dest": "/api/index.py"
+      "src": "/js/(.*)",
+      "dest": "/js/$1"
     },
     {
-      "src": "/api/chat/message",
-      "dest": "/api/index.py"
+      "src": "/login.html",
+      "dest": "/login.html"
     },
     {
-      "src": "/api/health",
-      "dest": "/api/index.py"
+      "src": "/register.html",
+      "dest": "/register.html"
     },
     {
-      "src": "/(.*)",
+      "src": "/chat.html",
+      "dest": "/chat.html"
+    },
+    {
+      "src": "/profile.html",
+      "dest": "/profile.html"
+    },
+    {
+      "src": "/",
       "dest": "/index.html"
     }
   ]
