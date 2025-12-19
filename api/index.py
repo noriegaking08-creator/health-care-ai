@@ -1,125 +1,39 @@
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
-import bcrypt
+import json
+import sqlite3
 import os
-from dotenv import load_dotenv
+import bcrypt
+from urllib.parse import parse_qs
 from datetime import datetime
-from typing import Optional
-import sys
-import importlib.util
+import requests
 
-# Load environment variables
-load_dotenv()
+# Database functions for Vercel compatibility
+def get_db_connection():
+    # Use a temporary location that works with Vercel's ephemeral filesystem
+    db_path = '/tmp/healthcom.db' 
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    return conn
 
-# Add backend directory to path to import modules
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'backend'))
+def init_db():
+    conn = get_db_connection()
+    # Create users table
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            hashed_password TEXT NOT NULL,
+            full_name TEXT,
+            age INTEGER,
+            location TEXT DEFAULT 'Malawi',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            is_active BOOLEAN DEFAULT 1
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
-# Import required models and functions from backend directory
-# We'll define them inline since we're consolidating
-
-# Database setup
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./healthco.db")
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-# Define models and functions inline since we're consolidating everything
-from pydantic import BaseModel
-from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime, ForeignKey, Boolean
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-from typing import Optional
-from datetime import datetime
-
-Base = declarative_base()
-
-# Database Models
-class User(Base):
-    __tablename__ = "users"
-
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, index=True, nullable=False)
-    hashed_password = Column(String, nullable=False)
-    full_name = Column(String)
-    age = Column(Integer)
-    location = Column(String, default="Malawi")
-    created_at = Column(DateTime, default=datetime.utcnow)
-    is_active = Column(Boolean, default=True)
-
-    # Relationships
-    conversations = relationship("Conversation", back_populates="user")
-    messages = relationship("Message", back_populates="user")
-
-class Conversation(Base):
-    __tablename__ = "conversations"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    title = Column(String, default="Health Consultation")
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-    # Relationships
-    user = relationship("User", back_populates="conversations")
-    messages = relationship("Message", back_populates="conversation")
-
-class Message(Base):
-    __tablename__ = "messages"
-
-    id = Column(Integer, primary_key=True, index=True)
-    conversation_id = Column(Integer, ForeignKey("conversations.id"), nullable=False)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)  # Who sent the message
-    role = Column(String, nullable=False)  # 'user' or 'assistant'
-    content = Column(Text, nullable=False)
-    timestamp = Column(DateTime, default=datetime.utcnow)
-
-    # Relationships
-    user = relationship("User", back_populates="messages")
-    conversation = relationship("Conversation", back_populates="messages")
-
-# Pydantic Models for API
-class UserCreate(BaseModel):
-    username: str
-    password: str
-    full_name: Optional[str] = None
-    age: Optional[int] = None
-    location: Optional[str] = "Malawi"
-
-class UserResponse(BaseModel):
-    id: int
-    username: str
-    full_name: Optional[str]
-    age: Optional[int]
-    location: Optional[str]
-
-    class Config:
-        from_attributes = True
-
-class LoginRequest(BaseModel):
-    username: str
-    password: str
-
-class LoginResponse(BaseModel):
-    user_id: int
-    username: str
-    message: str
-
-class ChatRequest(BaseModel):
-    user_id: int
-    message: str
-
-class ChatResponse(BaseModel):
-    response: str
-
-class MessageResponse(BaseModel):
-    id: int
-    role: str
-    content: str
-    timestamp: datetime
-
-    class Config:
-        from_attributes = True
+# Initialize the database
+init_db()
 
 # Utility functions
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -128,50 +42,71 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def get_password_hash(password: str) -> str:
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-# Auth functions
-def get_user_by_username(db: Session, username: str):
-    return db.query(User).filter(User.username == username).first()
+def get_user_by_username(username: str):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    user = cursor.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
+    conn.close()
+    return dict(user) if user else None
 
-def authenticate_user(db: Session, username: str, password: str):
-    user = get_user_by_username(db, username)
-    if not user or not verify_password(password, user.hashed_password):
+def authenticate_user(username: str, password: str):
+    user = get_user_by_username(username)
+    if not user or not verify_password(password, user['hashed_password']):
         return None
     return user
 
-def create_user(db: Session, user_data: UserCreate):
+def create_user(user_data: dict):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
     # Check if user already exists
-    existing_user = get_user_by_username(db, user_data.username)
+    existing_user = get_user_by_username(user_data['username'])
     if existing_user:
-        raise HTTPException(status_code=400, detail="Username already registered")
-
+        conn.close()
+        return {"error": "Username already registered"}
+    
     # Create new user
-    hashed_password = get_password_hash(user_data.password)
-    db_user = User(
-        username=user_data.username,
-        hashed_password=hashed_password,
-        full_name=user_data.full_name,
-        age=user_data.age,
-        location=user_data.location
-    )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+    hashed_password = get_password_hash(user_data['password'])
+    cursor.execute('''
+        INSERT INTO users (username, hashed_password, full_name, age, location)
+        VALUES (?, ?, ?, ?, ?)
+    ''', (
+        user_data['username'],
+        hashed_password,
+        user_data.get('full_name'),
+        user_data.get('age'),
+        user_data.get('location', 'Malawi')
+    ))
+    
+    user_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    
+    return {
+        "user_id": user_id,
+        "username": user_data['username'],
+        "message": "User registered successfully"
+    }
 
-def get_user_profile(db: Session, user_id: int):
-    user = db.query(User).filter(User.id == user_id).first()
+def get_user_profile(user_id: int):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    user = cursor.execute('SELECT * FROM users WHERE id = ?', (user_id,)).fetchone()
+    conn.close()
+    
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
+        return {"error": "User not found"}
+    
+    user_dict = dict(user)
+    # Remove sensitive data
+    del user_dict['hashed_password']
+    return user_dict
 
 # AI Doctor functionality
-import requests
-
 def get_ai_response(user_message: str, user_context: dict = None):
     """
     Get response from AI doctor using Hugging Face Inference API or a fallback system
     """
-    # Try Hugging Face API first (if available)
     hf_api_key = os.getenv("HF_API_KEY")
 
     if hf_api_key:
@@ -283,81 +218,147 @@ def get_fallback_response(user_message: str, user_context: dict = None):
                 "I'm not a substitute for proper medical diagnosis and treatment. "
                 "For serious conditions, please seek professional care immediately.")
 
-# Create tables
-Base.metadata.create_all(bind=engine)
-
-app = FastAPI(
-    title="HealthCom API",
-    description="A healthcare application backend with AI doctor functionality",
-    version="1.0.0"
-)
-
-# CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with your frontend URL
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Dependency to get database session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-# API Endpoints
-@app.post("/api/users/register", response_model=LoginResponse)
-def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
-    try:
-        db_user = create_user(db, user_data)
-        return LoginResponse(
-            user_id=db_user.id,
-            username=db_user.username,
-            message="User registered successfully"
-        )
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Registration failed: {str(e)}")
-
-@app.post("/api/users/login", response_model=LoginResponse)
-def login_user(login_data: LoginRequest, db: Session = Depends(get_db)):
-    user = authenticate_user(db, login_data.username, login_data.password)
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    return LoginResponse(
-        user_id=user.id,
-        username=user.username,
-        message="Login successful"
-    )
-
-@app.get("/api/users/{user_id}", response_model=UserResponse)
-def get_user(user_id: int, db: Session = Depends(get_db)):
-    user = get_user_profile(db, user_id)
-    return user
-
-@app.post("/api/chat/message", response_model=ChatResponse)
-def chat_with_doctor(chat_data: ChatRequest, db: Session = Depends(get_db)):
-    # Get the user to provide context
-    user = get_user_profile(db, chat_data.user_id)
-    user_context = {
-        "full_name": user.full_name,
-        "age": user.age,
-        "location": user.location
+# Vercel-compatible handler function
+def handle_request(event, context):
+    # Parse HTTP method and path
+    method = event['httpMethod']
+    path = event['path']
+    
+    # Parse query parameters
+    query_params = parse_qs(event.get('queryStringParameters', {}) or {})
+    
+    # Parse request body
+    body = event.get('body')
+    if body:
+        try:
+            body_data = json.loads(body)
+        except:
+            body_data = {}
+    else:
+        body_data = {}
+    
+    # Handle API routes
+    if path == '/api/users/register' and method == 'POST':
+        result = create_user(body_data)
+        if "error" in result:
+            return {
+                'statusCode': 400,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({"detail": result["error"]})
+            }
+        
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps(result)
+        }
+    
+    elif path == '/api/users/login' and method == 'POST':
+        user = authenticate_user(body_data.get('username'), body_data.get('password'))
+        if not user:
+            return {
+                'statusCode': 401,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({"detail": "Invalid credentials"})
+            }
+        
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({
+                "user_id": user['id'],
+                "username": user['username'],
+                "message": "Login successful"
+            })
+        }
+    
+    elif path.startswith('/api/users/') and method == 'GET':
+        # Extract user_id from path
+        user_id = int(path.split('/')[-1])
+        user = get_user_profile(user_id)
+        
+        if "error" in user:
+            return {
+                'statusCode': 404,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({"detail": user["error"]})
+            }
+        
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps(user)
+        }
+    
+    elif path == '/api/chat/message' and method == 'POST':
+        user_id = body_data.get('user_id')
+        message = body_data.get('message')
+        
+        user = get_user_profile(user_id)
+        if "error" in user:
+            return {
+                'statusCode': 404,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({"detail": user["error"]})
+            }
+        
+        user_context = {
+            "full_name": user.get('full_name', 'Patient'),
+            "age": user.get('age'),
+            "location": user.get('location', 'Malawi')
+        }
+        
+        ai_response = get_ai_response(message, user_context)
+        
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({"response": ai_response})
+        }
+    
+    elif path == '/api/health' and method == 'GET':
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({"status": "healthy", "message": "HealthCom API is running"})
+        }
+    
+    # Default response for unknown paths
+    return {
+        'statusCode': 404,
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+        'body': json.dumps({"error": "Endpoint not found"})
     }
 
-    # Get AI response
-    ai_response = get_ai_response(chat_data.message, user_context)
-
-    # Create conversation and save message (optional, for history)
-    # For this implementation, we'll just return the AI response
-    return ChatResponse(response=ai_response)
-
-@app.get("/api/health")
-def health_check():
-    return {"status": "healthy", "message": "HealthCom API is running"}
+# Make the handler accessible
+handler = handle_request
