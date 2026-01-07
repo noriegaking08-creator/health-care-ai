@@ -14,7 +14,13 @@ import requests
 load_dotenv()
 
 # Database setup
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./healthco.db")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./healthcom.db")
+
+# For PostgreSQL support on Render, update the URL if needed
+if DATABASE_URL.startswith("postgres://"):
+    # Convert postgres:// to postgresql:// for SQLAlchemy 1.4+ compatibility
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -44,15 +50,9 @@ def get_db():
     finally:
         db.close()
 
-# Utility functions
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
-
-def get_password_hash(password: str) -> str:
-    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
 # Import authentication functions
-from auth import authenticate_user, create_user, get_user_profile
+from auth import authenticate_user, create_user, get_user_profile, verify_password, get_password_hash
 from ai_doctor import get_ai_response
 
 # API Endpoints

@@ -1,5 +1,6 @@
 // api.js - API configuration and utility functions
-const API_BASE_URL = ''; // For Vercel deployment, using relative paths for API routes
+// For Render deployment, we'll use environment-specific API base URL
+const API_BASE_URL = process?.env?.REACT_APP_API_URL || ''; // Will be set during deployment
 
 // Store user session in localStorage
 class SessionManager {
@@ -30,8 +31,8 @@ class SessionManager {
 // API Service for backend communication
 class APIService {
     static async request(endpoint, options = {}) {
-        // For Vercel deployment, API routes are under /api/
-        const url = `/api${endpoint}`;
+        // Use API_BASE_URL for external backend, or relative path for Vercel
+        const url = API_BASE_URL ? `${API_BASE_URL}${endpoint}` : `/api${endpoint}`;
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -51,6 +52,11 @@ class APIService {
             return data;
         } catch (error) {
             console.error('API Error:', error);
+            // If using external API and it fails, try mock service
+            if (API_BASE_URL) {
+                console.warn('External API failed, falling back to mock service');
+                throw error; // Let the calling function handle fallback
+            }
             throw error;
         }
     }
@@ -88,7 +94,8 @@ class APIService {
     // Health check
     static async healthCheck() {
         try {
-            const response = await fetch('/api/health');
+            const url = API_BASE_URL ? `${API_BASE_URL}/health` : '/api/health';
+            const response = await fetch(url);
             return response.ok;
         } catch {
             return false;

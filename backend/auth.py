@@ -2,6 +2,7 @@ from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 from models import User, UserCreate, UserResponse, LoginRequest, LoginResponse
 from datetime import datetime
+import bcrypt
 
 def get_user_by_username(db: Session, username: str):
     return db.query(User).filter(User.username == username).first()
@@ -37,3 +38,9 @@ def get_user_profile(db: Session, user_id: int):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
+
+def get_password_hash(password: str) -> str:
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')

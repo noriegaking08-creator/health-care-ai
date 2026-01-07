@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile - HealthCom</title>
+    <title>Profile - HealthCare AI</title>
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="View and manage your HealthCare AI profile and health information">
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
                 <i class="fas fa-heartbeat"></i>
-                <span>HealthCom</span>
+                <span>HealthCare AI</span>
             </div>
             <ul class="nav-menu">
                 <li><a href="index.html" class="nav-link">Home</a></li>
@@ -26,11 +28,25 @@
     <main class="profile-container">
         <div class="profile-header">
             <div class="profile-avatar">
-                <i class="fas fa-user-circle"></i>
+                <i class="fas fa-user-md"></i>
             </div>
             <div class="profile-info">
                 <h2 id="profileName">User Profile</h2>
                 <p id="profileUsername">@username</p>
+                <div class="profile-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="chatCount">0</span>
+                        <span class="stat-label">Consultations</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="daysActive">0</span>
+                        <span class="stat-label">Days Active</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="healthScore">0%</span>
+                        <span class="stat-label">Health Score</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -39,26 +55,105 @@
                 <h3><i class="fas fa-user"></i> Personal Information</h3>
                 <div class="detail-item">
                     <span class="label">Full Name:</span>
-                    <span id="profileFullName">-</span>
+                    <span class="value" id="profileFullName">-</span>
                 </div>
                 <div class="detail-item">
                     <span class="label">Age:</span>
-                    <span id="profileAge">-</span>
+                    <span class="value" id="profileAge">-</span>
                 </div>
                 <div class="detail-item">
                     <span class="label">Location:</span>
-                    <span id="profileLocation">-</span>
+                    <span class="value" id="profileLocation">-</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Member Since:</span>
+                    <span class="value" id="memberSince">-</span>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <h3><i class="fas fa-heartbeat"></i> Health Summary</h3>
+                <div class="health-summary">
+                    <div class="health-item">
+                        <span class="health-label">Last Consultation:</span>
+                        <span class="health-value" id="lastConsultation">Never</span>
+                    </div>
+                    <div class="health-item">
+                        <span class="health-label">Health Goals:</span>
+                        <span class="health-value" id="healthGoals">Not set</span>
+                    </div>
+                    <div class="health-item">
+                        <span class="health-label">Preferred Language:</span>
+                        <span class="health-value" id="preferredLanguage">English</span>
+                    </div>
                 </div>
             </div>
 
             <div class="profile-card">
                 <h3><i class="fas fa-history"></i> Recent Activity</h3>
-                <p>No recent activity</p>
+                <div class="activity-feed" id="activityFeed">
+                    <div class="activity-item">
+                        <i class="fas fa-comment-medical"></i>
+                        <div class="activity-content">
+                            <p>Welcome to HealthCare AI! This is your first visit.</p>
+                            <span class="activity-time">Just now</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <h3><i class="fas fa-cog"></i> Account Settings</h3>
+                <div class="settings-grid">
+                    <button class="setting-btn">
+                        <i class="fas fa-user-edit"></i>
+                        <span>Edit Profile</span>
+                    </button>
+                    <button class="setting-btn">
+                        <i class="fas fa-lock"></i>
+                        <span>Change Password</span>
+                    </button>
+                    <button class="setting-btn">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                    </button>
+                    <button class="setting-btn">
+                        <i class="fas fa-download"></i>
+                        <span>Export Data</span>
+                    </button>
+                </div>
             </div>
         </div>
     </main>
 
     <script src="/js/api.js"></script>
     <script src="/js/main.js"></script>
+
+    <script>
+        // Simulate loading profile data
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate API call delay
+            setTimeout(() => {
+                // Update stats with simulated data
+                document.getElementById('chatCount').textContent = Math.floor(Math.random() * 50) + 1;
+                document.getElementById('daysActive').textContent = Math.floor(Math.random() * 100) + 1;
+                document.getElementById('healthScore').textContent = Math.floor(Math.random() * 40) + 60 + '%';
+
+                // Update member since date
+                const joinDate = new Date();
+                joinDate.setMonth(joinDate.getMonth() - Math.floor(Math.random() * 12));
+                document.getElementById('memberSince').textContent = joinDate.toLocaleDateString();
+
+                // Update last consultation
+                const lastConsult = new Date();
+                lastConsult.setDate(lastConsult.getDate() - Math.floor(Math.random() * 30));
+                document.getElementById('lastConsultation').textContent = lastConsult.toLocaleDateString();
+
+                // Update health goals
+                const goals = ['Weight Loss', 'Better Sleep', 'Stress Management', 'Fitness Improvement', 'Nutrition Focus'];
+                document.getElementById('healthGoals').textContent = goals[Math.floor(Math.random() * goals.length)];
+            }, 1000);
+        });
+    </script>
 </body>
 </html>

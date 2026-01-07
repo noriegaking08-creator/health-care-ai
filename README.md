@@ -1,132 +1,122 @@
-# HealthCom - Personal Healthcare Assistant
+# HealthCare AI - Personal Healthcare Assistant
 
-A modern, personalized healthcare web application built with pure HTML, CSS, and JavaScript. Get professional medical advice and personalized health consultations anytime, anywhere.
+A modern, personalized healthcare web application with AI-powered medical consultation. Get professional medical advice and personalized health consultations anytime, anywhere.
 
 ## 🚀 Features
 
 - **User Authentication**: Secure login and registration system
-- **AI-Powered Chat**: Intelligent health consultation with Dr. Alistair Finch
+- **AI-Powered Chat**: Intelligent health consultation with Dr. Alistair Finch using Hugging Face models
 - **Personalized Profile**: Manage your health information and preferences
-- **Responsive Design**: Works perfectly on all devices
-- **Fast & Lightweight**: Optimized for speed and performance
-- **Easy Deployment**: Ready for Vercel deployment through GitHub
+- **Database Integration**: Full user management and conversation history
+- **Production Ready**: Optimized for deployment on Render
 
 ## 📁 Project Structure
 
 ```
-healthcom/
-├── index.html          # Home page
-├── login.html          # Login page
-├── register.html       # Registration page
-├── chat.html           # Main chat interface
-├── profile.html        # User profile page
-├── css/
-│   └── style.css       # Main stylesheet
-├── js/
-│   ├── api.js          # API and session management
-│   ├── auth.js         # Authentication functions
-│   ├── chat.js         # Chat functionality
-│   └── main.js         # Main application logic
-└── vercel.json         # Vercel configuration
+health-care-ai/
+├── server.py           # Application entry point
+├── requirements.txt    # Python dependencies
+├── render.yaml         # Render deployment configuration
+├── .gitignore        # Git ignore rules
+├── README.md         # Project documentation
+├── DEPLOYMENT.md     # Deployment instructions
+├── ENVIRONMENT_SETUP.md # Environment setup guide
+├── backend/
+│   ├── main.py       # FastAPI application
+│   ├── models.py     # Database models
+│   ├── auth.py       # Authentication functions
+│   └── ai_doctor.py  # AI consultation logic
+└── public/           # Frontend files (HTML, CSS, JS)
+    ├── index.html
+    ├── login.html
+    ├── register.html
+    ├── chat.html
+    ├── profile.html
+    ├── css/
+    └── js/
 ```
 
 ## 🚀 Quick Start
 
-### For Development:
+### For Local Development:
 
 1. **Clone the repository**:
    ```bash
    git clone <your-repo-url>
-   cd healthcom
+   cd health-care-ai
    ```
 
-2. **Open `index.html` in your browser** to start the app
-
-3. **The app includes mock API functionality** for immediate testing
-
-### For Production (with real backend):
-
-1. **Deploy your backend API** to a server (e.g., Railway, Render, Heroku)
-
-2. **Update `js/api.js`** to point to your backend URL:
-   ```javascript
-   const API_BASE_URL = 'https://your-backend-url.com';
+2. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
    ```
 
-## 🔧 API Integration
+3. **Set up environment variables**:
+   Create a `.env` file in the root directory with:
+   ```env
+   HF_API_KEY=your_huggingface_api_token_here
+   DATABASE_URL=sqlite:///./healthcare.db
+   ENVIRONMENT=development
+   ```
 
-The app includes smart API handling:
+4. **Run the application**:
+   ```bash
+   python server.py
+   ```
 
-- **Automatic fallback**: Uses mock API if backend is unreachable
-- **Session management**: Stores user data in localStorage
-- **Error handling**: Graceful error messages for users
-- **Real-time chat**: Interactive health consultations
+5. **Access the application** at `http://localhost:8000`
 
-## 🌐 Vercel Deployment
+## 🌐 Render Deployment
 
-This app is optimized for Vercel deployment:
+This app is optimized for Render deployment:
 
 1. **Push your code to GitHub**
-2. **Connect to Vercel**:
-   - Go to [vercel.com](https://vercel.com)
-   - Import your GitHub repository
-   - Vercel will automatically detect and deploy your static site
-3. **Your site is live!**
+2. **Connect to Render**:
+   - Go to [render.com](https://render.com)
+   - Create a new "Web Service"
+   - Connect your GitHub repository
+   - Render will automatically detect the Python application from `render.yaml`
+3. **Set environment variables** in Render dashboard:
+   - `DATABASE_URL`: Your PostgreSQL database URL
+   - `HF_API_KEY`: Your Hugging Face API token
+   - `ENVIRONMENT`: production
+4. **Your API is live!**
 
-## 💡 Key Improvements
+## 🔧 API Endpoints
 
-- **Simplified Architecture**: Single codebase with no complex dependencies
-- **Better Performance**: Lightweight with fast loading times
-- **Mobile-First Design**: Responsive and optimized for mobile
-- **Enhanced UX**: Smooth animations and intuitive interface
-- **Personalized**: Tailored user experience and health advice
-- **Secure**: Proper session management and input validation
-- **Maintainable**: Clean, well-organized code structure
+- `POST /users/register` - Register a new user
+- `POST /users/login` - User login
+- `GET /users/{user_id}` - Get user profile
+- `POST /chat/message` - Chat with AI doctor
+- `GET /health` - Health check endpoint
 
 ## 🛠️ Technologies Used
 
-- **Frontend**: Pure HTML5, CSS3, JavaScript (ES6+)
-- **Styling**: Modern CSS with flexbox/grid and animations
-- **API**: RESTful API integration
-- **Deployment**: Optimized for Vercel static hosting
-- **Icons**: Font Awesome for beautiful icons
-
-## 📱 Features
-
-- **Health Consultation**: Chat with AI doctor for medical advice
-- **User Profiles**: Personalized health information
-- **Secure Authentication**: Safe login and registration
-- **Real-time Messaging**: Instant health consultations
-- **Responsive Design**: Perfect on desktop, tablet, and mobile
-- **Offline Support**: Basic functionality available offline
+- **Backend**: FastAPI, SQLAlchemy, Python
+- **Database**: PostgreSQL (production) / SQLite (development)
+- **AI Model**: Hugging Face (MedAlpaca-7b medical model)
+- **Authentication**: bcrypt password hashing
+- **Deployment**: Render with automatic deployment from GitHub
 
 ## 🔐 Environment Variables
 
-To run this application with full backend functionality, create a `.env` file in the root directory with the following variables:
+For production deployment, configure these environment variables:
 
 ```env
 HF_API_KEY=your_huggingface_api_token_here
-DATABASE_URL=sqlite:///./healthcom.db
-ENVIRONMENT=development
+DATABASE_URL=postgresql://username:password@host:port/database_name
+ENVIRONMENT=production
 ```
 
 Get your Hugging Face API token from [Hugging Face Settings](https://huggingface.co/settings/tokens).
 
-## 🎨 Customization
+## 🚀 Production Features
 
-Easy to customize the look and feel:
-
-- **Colors**: Modify CSS variables in `style.css`
-- **Logo**: Change the navbar logo and favicon
-- **Content**: Update text content in HTML files
-- **Behaviors**: Modify JavaScript for custom functionality
-
-## 🚀 Performance Tips
-
-- **Image Optimization**: Use WebP format for images
-- **CSS Optimization**: Minify CSS in production
-- **JavaScript Bundling**: Consider bundling in future updates
-- **CDN**: Serve assets via CDN for faster loading
+- **Scalable Architecture**: Designed for cloud deployment
+- **Secure Authentication**: Proper password hashing and session management
+- **AI Integration**: Medical-specific model with fallback responses
+- **Database Management**: Full ORM with migration-ready schema
+- **Health Monitoring**: Built-in health check endpoint
 
 ## 📞 Support
 

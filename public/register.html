@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - HealthCom</title>
+    <title>Register - HealthCare AI</title>
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Create your HealthCare AI account for personalized health consultations">
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
                 <i class="fas fa-heartbeat"></i>
-                <span>HealthCom</span>
+                <span>HealthCare AI</span>
             </div>
             <ul class="nav-menu">
                 <li><a href="index.html" class="nav-link">Home</a></li>
@@ -25,43 +27,71 @@
     <main class="auth-section">
         <div class="auth-container">
             <div class="auth-form">
-                <h2>Create Account</h2>
-                <p>Join HealthCom today</p>
-                
+                <div class="form-header">
+                    <i class="fas fa-user-plus"></i>
+                    <h2>Create Account</h2>
+                    <p>Join HealthCare AI today</p>
+                </div>
+
                 <form id="registerForm">
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="username"><i class="fas fa-user"></i> Username</label>
+                            <input type="text" id="username" name="username" required placeholder="Choose a username">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password"><i class="fas fa-lock"></i> Password</label>
+                            <input type="password" id="password" name="password" required placeholder="Create a password">
+                        </div>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" required>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName"><i class="fas fa-user-circle"></i> Full Name</label>
+                            <input type="text" id="fullName" name="fullName" placeholder="Enter your full name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="age"><i class="fas fa-birthday-cake"></i> Age</label>
+                            <input type="number" id="age" name="age" placeholder="Your age">
+                        </div>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label for="fullName">Full Name</label>
-                        <input type="text" id="fullName" name="fullName">
+                        <label for="location"><i class="fas fa-map-marker-alt"></i> Location</label>
+                        <input type="text" id="location" name="location" value="Malawi" placeholder="Where are you located?">
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="age">Age</label>
-                        <input type="number" id="age" name="age">
+
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="terms" required>
+                            <span class="checkmark"></span>
+                            I agree to the <a href="#" class="terms-link">Terms of Service</a> and <a href="#" class="terms-link">Privacy Policy</a>
+                        </label>
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="location">Location</label>
-                        <input type="text" id="location" name="location" value="Malawi">
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">Register</button>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
                 </form>
-                
+
                 <div class="auth-footer">
                     <p>Already have an account? <a href="login.html">Login here</a></p>
                 </div>
-                
+
                 <div id="registerMessage" class="message"></div>
+            </div>
+
+            <div class="auth-features">
+                <h3>Join HealthCare AI</h3>
+                <ul>
+                    <li><i class="fas fa-shield-alt"></i> Secure & Private</li>
+                    <li><i class="fas fa-user-md"></i> Expert Medical Guidance</li>
+                    <li><i class="fas fa-clock"></i> 24/7 Availability</li>
+                    <li><i class="fas fa-history"></i> Consultation History</li>
+                    <li><i class="fas fa-mobile-alt"></i> Access Anywhere</li>
+                </ul>
             </div>
         </div>
     </main>
