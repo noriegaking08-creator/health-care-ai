@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker, Session
 import bcrypt
 import os
 from dotenv import load_dotenv
-from models import Base, User, Conversation, Message, UserCreate, UserResponse, LoginRequest, LoginResponse, ChatRequest, ChatResponse
+from .models import Base, User, Conversation, Message, UserCreate, UserResponse, LoginRequest, LoginResponse, ChatRequest, ChatResponse
 from datetime import datetime
 from typing import Optional
 import requests

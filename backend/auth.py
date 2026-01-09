@@ -1,6 +1,6 @@
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
-from models import User, UserCreate, UserResponse, LoginRequest, LoginResponse
+from .models import User, UserCreate, UserResponse, LoginRequest, LoginResponse
 from datetime import datetime
 import bcrypt
 
